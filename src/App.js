@@ -1,9 +1,10 @@
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import Webcam from 'react-webcam';
 import * as facemesh from '@mediapipe/face_mesh';
-// import * as tf from '@tensorflow/tfjs';
+import * as tf from '@tensorflow/tfjs';
 
 const EmotionDetection = () => {
+  const a = useState();
   const webcamRef = useRef(null);
   const canvasRef = useRef(null);
   const faceMeshRef = useRef(null);
@@ -35,6 +36,7 @@ const EmotionDetection = () => {
         ctx.stroke();
       }
     };
+
     const faceMesh = new facemesh.FaceMesh({
       locateFile: (file) => {
         return `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`;
@@ -45,6 +47,7 @@ const EmotionDetection = () => {
       minDetectionConfidence: 0.5,
       minTrackingConfidence: 0.5,
     });
+
     const onResults = (results) => {
       const canvasCtx = canvasRef.current.getContext('2d');
       canvasCtx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
@@ -54,21 +57,21 @@ const EmotionDetection = () => {
         drawLandmarks(canvasCtx, landmarks);
       }
     };
+
     faceMesh.onResults(onResults);
     faceMeshRef.current = faceMesh;
 
-    if (webcamRef.current.video.readyState === 4) {
-      const video = webcamRef.current.video;
-      setInterval(() => {
-        faceMeshRef.current.send({ image: video });
-      }, 100);
-    }
-  }, [])
+    // if (webcamRef.current.video.readyState === 4) {
+    //   const video = webcamRef.current.video;
+    //   setInterval(() => {
+    //     faceMeshRef.current.send({ image: video });
+    //   }, 100);
+    // }
+  }, []); // 빈 배열로 디펜던시 없음
+
   useEffect(() => {
     loadFaceMesh();
   }, [loadFaceMesh]);
-
-
 
   return (
     <div>
@@ -86,6 +89,7 @@ const EmotionDetection = () => {
           height: 480,
         }}
       />
+
       <canvas
         ref={canvasRef}
         width="640"
@@ -102,6 +106,16 @@ const EmotionDetection = () => {
           height: 480,
         }}
       />
+      {/* {a[1]} */}
+      <button onClick={
+
+        () => {
+          const video = webcamRef.current.video;
+          setInterval(() => {
+            faceMeshRef.current.send({ image: video });
+          }, 100);
+        }
+      }>asdfasdf</button>
     </div>
   );
 };
